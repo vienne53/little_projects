@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Love u Benny</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #e6f0ff 0%, #c9e7ff 100%);
+      font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+      color: #fff;
+    }
+    body {
+      position: relative;
+      min-height: 100vh;
+    }
+    .star-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cloud {
+      position: fixed;
+      opacity: 0.18;
+      z-index: 1;
+      pointer-events: none;
+      animation: cloud-move 60s linear infinite;
+    }
+    .cloud1 { top: 60px; left: 10vw; width: 220px; animation-delay: 0s;}
+    .cloud2 { top: 120px; left: 60vw; width: 180px; animation-delay: 10s;}
+    .cloud3 { top: 300px; left: 30vw; width: 260px; animation-delay: 20s;}
+    @keyframes cloud-move {
+      0% { transform: translateX(0);}
+      100% { transform: translateX(200px);}
+    }
+    .meteor-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 180px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .love-title {
+      text-align: center;
+      font-size: 3em;
+      margin-top: 60px;
+      letter-spacing: 0.2em;
+      text-shadow: 0 0 18px #fff, 0 0 32px #d6eaff;
+      min-height: 1.5em;
+      font-weight: bold;
+      z-index: 3;
+      position: relative;
+    }
+    .heart-canvas {
+      display: block;
+      margin: 40px auto 0 auto;
+      background: transparent;
+      z-index: 4;
+    }
+    .lyrics-block {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 30px auto 0 auto;
+      max-width: 900px;
+      position: relative;
+      z-index: 5;
+    }
+    .fairy-col {
+      width: 60px;
+      min-width: 60px;
+      height: 480px;
+      position: relative;
+    }
+    .fairy {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.2em;
+      filter: drop-shadow(0 0 12px #fff) drop-shadow(0 0 18px #fff);
+      transition: top 0.2s linear;
+      user-select: none;
+      z-index: 6;
+    }
+    .fairy.trail::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 50%; top: 60%;
+      width: 8px; height: 40px;
+      background: linear-gradient(180deg, #fff8 0%, #fff0 100%);
+      border-radius: 8px;
+      transform: translateX(-50%);
+      z-index: -1;
+    }
+    .lyrics {
+      flex: 1;
+      color: #fff;
+      font-size: 1.3em;
+      text-align: center;
+      line-height: 2.1em;
+      text-shadow: 0 0 8px #fff, 0 0 2px #aaa;
+      background: rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px 0;
+      margin: 0 10px;
+      min-width: 320px;
+      font-weight: 500;
+      z-index: 5;
+    }
+    .music-block {
+      text-align: center;
+      margin: 30px 0 0 0;
+      z-index: 7;
+      position: relative;
+    }
+    .forus {
+      text-align: center;
+      font-size: 2em;
+      color: #fff;
+      margin: 30px 0 0 0;
+      letter-spacing: 0.15em;
+      text-shadow: 0 0 8px #fff, 0 0 2px #aaa;
+      font-weight: bold;
+      z-index: 8;
+      position: relative;
+    }
+    .footer {
+      text-align: center;
+      color: #fff;
+      font-size: 1.1em;
+      margin: 40px 0 10px 0;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 8px #fff, 0 0 2px #aaa;
+      z-index: 9;
+      position: relative;
+    }
+    .footer .icon {
+      font-size: 1.2em;
+      vertical-align: middle;
+      margin: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 星光背景 -->
+  <canvas class="star-bg"></canvas>
+  <!-- 云朵 -->
+  <img src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/waifu/cloud1.png" class="cloud cloud1" />
+  <img src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/waifu/cloud2.png" class="cloud cloud2" />
+  <img src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/waifu/cloud3.png" class="cloud cloud3" />
+  <!-- 流星雨 -->
+  <canvas class="meteor-canvas"></canvas>
+  <!-- LOVE U BENNY -->
+  <div class="love-title" id="loveTitle"></div>
+  <!-- FOR US 和 footer 提到这里 -->
+  <div class="forus">FOR US</div>
+  <div class="footer">
+    送给Benny的少女心宇宙
+    <span class="icon">✨</span>
+    <span class="icon">🤍</span>
+    <span class="icon">🧚‍♀️</span>
+    <span class="icon">🌙</span>
+  </div>
+  <!-- 音乐播放器 -->
+  <div class="music-block" style="margin-top: 10px;">
+    <audio id="audio" src="benny_piano.mp3" controls autoplay loop></audio>
+  </div>
+  <!-- 大心形 -->
+  <canvas class="heart-canvas" id="heartCanvas" width="500" height="350"></canvas>
+  <!-- 仙女动画 -->
+  <div class="lyrics-block" style="margin-top: 40px;">
+    <div class="fairy-col"><span class="fairy trail" id="fairyL">🧚‍♀️</span></div>
+    <div class="fairy-col"></div>
+    <div class="fairy-col"><span class="fairy trail" id="fairyR">🧚‍♀️</span></div>
+  </div>
+  <!-- 歌词区固定在底部，自动滚动 -->
+  <div id="lyrics-fixed" style="
+    position: fixed;
+    left: 0; right: 0;
+    bottom: 30px;
+    width: 100vw;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  ">
+    <div id="lyrics-scroll" style="
+      background:rgba(255,255,255,0.13);
+      font-size:1em;
+      box-shadow:0 0 16px #fff3;
+      height: 220px;
+      overflow: hidden;
+      width: 480px;
+      position: relative;
+      pointer-events: auto;
+      border-radius: 18px;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+    ">
+      <!-- 左侧仙女和爱心 -->
+      <div style="width:48px;flex-shrink:0;position:relative;">
+        <span id="fairyL2" style="position:absolute;left:50%;transform:translateX(-50%);font-size:1.7em;top:20px;filter:drop-shadow(0 0 8px #fff);">🧚‍♀️</span>
+        <span id="heartL2" style="position:absolute;left:50%;transform:translateX(-50%);font-size:2.2em;top:70px;filter:drop-shadow(0 0 12px #fff);">🤍</span>
+      </div>
+      <!-- 歌词滚动 -->
+      <div id="lyrics-inner" style="flex:1;"></div>
+      <!-- 右侧仙女和爱心 -->
+      <div style="width:48px;flex-shrink:0;position:relative;">
+        <span id="fairyR2" style="position:absolute;left:50%;transform:translateX(-50%);font-size:1.7em;top:20px;filter:drop-shadow(0 0 8px #fff);">🧚‍♀️</span>
+        <span id="heartR2" style="position:absolute;left:50%;transform:translateX(-50%);font-size:2.2em;top:70px;filter:drop-shadow(0 0 12px #fff);">🤍</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 1. 星光背景
+    const starCanvas = document.querySelector('.star-bg');
+    const sCtx = starCanvas.getContext('2d');
+    function resizeStar() {
+      starCanvas.width = window.innerWidth;
+      starCanvas.height = window.innerHeight;
+    }
+    resizeStar();
+    window.addEventListener('resize', resizeStar);
+    let stars = [];
+    for(let i=0;i<120;i++){
+      stars.push({
+        x: Math.random()*window.innerWidth,
+        y: Math.random()*window.innerHeight,
+        r: 0.7+Math.random()*1.5,
+        alpha: 0.5+Math.random()*0.5,
+        twinkle: Math.random()*Math.PI*2
+      });
+    }
+    function drawStars(){
+      sCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
+      for(let s of stars){
+        sCtx.save();
+        sCtx.globalAlpha = s.alpha*(0.7+0.3*Math.sin(Date.now()/800+s.twinkle));
+        sCtx.beginPath();
+        sCtx.arc(s.x,s.y,s.r,0,2*Math.PI);
+        sCtx.fillStyle="#fff";
+        sCtx.shadowColor="#fff";
+        sCtx.shadowBlur=8;
+        sCtx.fill();
+        sCtx.restore();
+      }
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // 2. LOVE U BENNY 渐变淡入
+    const loveText = "LOVE U BENNY";
+    const loveTitle = document.getElementById('loveTitle');
+    loveTitle.innerHTML = loveText.split('').map((ch, i) =>
+      `<span class="fade-letter" style="opacity:0;transition:opacity 1.2s cubic-bezier(.4,2,.6,1);">${ch}</span>`
+    ).join('');
+    // 依次渐变淡入
+    function fadeInLetters(idx=0) {
+      const letters = document.querySelectorAll('.fade-letter');
+      if(idx < letters.length) {
+        letters[idx].style.opacity = 1;
+        setTimeout(()=>fadeInLetters(idx+1), 400); // 慢慢淡入
+      }
+    }
+    fadeInLetters();
+
+    // 3. 流星雨动画
+    const meteorCanvas = document.querySelector('.meteor-canvas');
+    const mCtx = meteorCanvas.getContext('2d');
+    function resizeMeteor() {
+      meteorCanvas.width = window.innerWidth;
+      meteorCanvas.height = 180;
+    }
+    resizeMeteor();
+    window.addEventListener('resize', resizeMeteor);
+
+    let meteors = [];
+    function drawMeteorRain() {
+      mCtx.clearRect(0,0,meteorCanvas.width,meteorCanvas.height);
+      // 新增流星
+      if (Math.random() < 0.5) {
+        let x = Math.random() * meteorCanvas.width;
+        let len = 80 + Math.random()*60;
+        let speed = 12 + Math.random()*6;
+        let color = "#fff";
+        if(Math.random()<0.08) color="#e6f0ff"; // 偶尔有特别亮的流星
+        meteors.push({
+          x: x, y: -20, len: len, speed: speed, alpha: 1, color: color
+        });
+      }
+      // 绘制流星
+      for (let i=meteors.length-1; i>=0; i--) {
+        let m = meteors[i];
+        mCtx.save();
+        mCtx.globalAlpha = m.alpha;
+        mCtx.strokeStyle = m.color;
+        mCtx.shadowColor = m.color;
+        mCtx.shadowBlur = 18;
+        mCtx.lineWidth = 2.6;
+        mCtx.beginPath();
+        mCtx.moveTo(m.x, m.y);
+        mCtx.lineTo(m.x+0.7*m.len, m.y+1.2*m.len);
+        mCtx.stroke();
+        // 拖尾
+        mCtx.globalAlpha = m.alpha*0.5;
+        mCtx.lineWidth = 1.2;
+        mCtx.beginPath();
+        mCtx.moveTo(m.x-0.3*m.len, m.y-0.5*m.len);
+        mCtx.lineTo(m.x, m.y);
+        mCtx.stroke();
+        mCtx.restore();
+        m.x += 0.7*m.speed;
+        m.y += 1.2*m.speed;
+        m.alpha *= 0.96;
+        if (m.y > meteorCanvas.height+40 || m.alpha < 0.1) meteors.splice(i,1);
+      }
+      requestAnimationFrame(drawMeteorRain);
+    }
+    drawMeteorRain();
+
+    // 4. 爱心绕圈动画
+    const heartCanvas = document.getElementById('heartCanvas');
+    const hCtx = heartCanvas.getContext('2d');
+    const nHearts = 20;
+    const R = 90;
+    let heartAngle = 0;
+    let heartFlash = 0;
+    function drawHearts() {
+      hCtx.clearRect(0,0,heartCanvas.width,heartCanvas.height);
+      // 画大心形路径
+      let cx = 250, cy = 170;
+      let points = [];
+      for (let i=0; i<nHearts; i++) {
+        let t = 2*Math.PI*i/nHearts + heartAngle;
+        let x = R*16*Math.pow(Math.sin(t),3);
+        let y = -R*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+        points.push([cx+x, cy+y]);
+      }
+      // 绘制小爱心
+      for (let i=0; i<nHearts; i++) {
+        let [x, y] = points[i];
+        hCtx.save();
+        hCtx.font = "32px serif";
+        hCtx.textAlign = "center";
+        hCtx.textBaseline = "middle";
+        hCtx.shadowColor = "#fff";
+        hCtx.shadowBlur = 10;
+        hCtx.globalAlpha = 0.95;
+        hCtx.fillText("🤍", x, y);
+        hCtx.restore();
+      }
+      // 中央大心形闪烁
+      heartFlash += 0.08;
+      let flashAlpha = 0.7+0.3*Math.sin(heartFlash*2);
+      hCtx.save();
+      hCtx.font = "60px serif";
+      hCtx.textAlign = "center";
+      hCtx.textBaseline = "middle";
+      hCtx.shadowColor = "#fff";
+      hCtx.shadowBlur = 24;
+      hCtx.globalAlpha = flashAlpha;
+      hCtx.fillText("🤍", cx, cy);
+      hCtx.restore();
+
+      heartAngle += 0.025;
+      requestAnimationFrame(drawHearts);
+    }
+    drawHearts();
+
+    // 5. 歌词下移
+    const lyricsArr = [
+      "願我會揸火箭 帶你到天空去",
+      "在太空中兩人住",
+      "活到一千歲 都一般心醉",
+      "有你在身邊多樂趣",
+      "共你雙雙對 好得戚好得意",
+      "地冧天崩當閒事",
+      "就算翻風雨 只需睇到你",
+      "似見陽光千萬里",
+      "有了你開心D 乜都稱心滿意",
+      "鹹魚白菜也好好味",
+      "我與你永共敍 分分鐘需要你",
+      "你似是陽光空氣",
+      "扮靚D皆因你 癲癲地皆因你",
+      "為你甘心作傻事",
+      "扮下猩猩叫 睇到乜都笑",
+      "有你在身邊多樂趣",
+      "若有朝失左你 花開都不美",
+      "願到荒島去長住",
+      "做個假的你 天天都相對",
+      "對木頭公仔做戲"
+    ];
+
+    // 渲染两遍歌词实现无缝滚动
+    const lyricsInner = document.getElementById('lyrics-inner');
+    lyricsInner.innerHTML = lyricsArr.concat(lyricsArr).map(line =>
+      `<div style="height:32px;line-height:32px;text-align:center;font-size:0.95em;">${line}</div>`
+    ).join('');
+
+    // 歌词滚动动画
+    let scrollPos = 0;
+    const lineHeight = 32; // px
+    const totalLines = lyricsArr.length;
+    const scrollArea = lineHeight * totalLines;
+    function scrollLyrics() {
+      scrollPos += 0.5; // 控制滚动速度
+      if (scrollPos >= scrollArea) scrollPos = 0;
+      lyricsInner.style.transform = `translateY(-${scrollPos}px)`;
+      requestAnimationFrame(scrollLyrics);
+    }
+    scrollLyrics();
+
+    // 仙女和爱心跳跃动画
+    function jumpFairyHeart() {
+      const t = Date.now() / 600;
+      // 跳跃范围
+      const fairyY = 20 + Math.abs(Math.sin(t)) * 30;
+      const heartY = 70 + Math.abs(Math.cos(t)) * 30;
+      document.getElementById('fairyL2').style.top = fairyY + 'px';
+      document.getElementById('fairyR2').style.top = fairyY + 'px';
+      document.getElementById('heartL2').style.top = heartY + 'px';
+      document.getElementById('heartR2').style.top = heartY + 'px';
+      requestAnimationFrame(jumpFairyHeart);
+    }
+    jumpFairyHeart();
+
+    // 6. 音乐自动播放（兼容微信/手机）
+    window.onload = function() {
+      const audio = document.getElementById('audio');
+      audio.play().catch(()=>{});
+      document.body.addEventListener('touchstart', function() {
+        audio.play().catch(()=>{});
+      }, {once:true});
+    };
+
+    // 7. 动画持续55秒后全部静止
+    setTimeout(()=>{
+      // 停止所有动画
+      window.cancelAnimationFrame(drawStars);
+      window.cancelAnimationFrame(drawMeteorRain);
+      window.cancelAnimationFrame(drawHearts);
+      window.cancelAnimationFrame(jumpFairyHeart);
+      // 只保留静态内容
+      // LOVE U BENNY
+      loveTitle.innerHTML = loveText;
+      // 流星雨和星光背景清空
+      mCtx.clearRect(0,0,meteorCanvas.width,meteorCanvas.height);
+      sCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
+      // 大心形静止
+      hCtx.clearRect(0,0,heartCanvas.width,heartCanvas.height);
+      let cx = 250, cy = 170;
+      let points = [];
+      for (let i=0; i<nHearts; i++) {
+        let t = 2*Math.PI*i/nHearts;
+        let x = R*16*Math.pow(Math.sin(t),3);
+        let y = -R*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+        points.push([cx+x, cy+y]);
+      }
+      for (let i=0; i<nHearts; i++) {
+        let [x, y] = points[i];
+        hCtx.save();
+        hCtx.font = "32px serif";
+        hCtx.textAlign = "center";
+        hCtx.textBaseline = "middle";
+        hCtx.shadowColor = "#fff";
+        hCtx.shadowBlur = 10;
+        hCtx.globalAlpha = 0.95;
+        hCtx.fillText("🤍", x, y);
+        hCtx.restore();
+      }
+      hCtx.save();
+      hCtx.font = "60px serif";
+      hCtx.textAlign = "center";
+      hCtx.textBaseline = "middle";
+      hCtx.shadowColor = "#fff";
+      hCtx.shadowBlur = 24;
+      hCtx.globalAlpha = 1;
+      hCtx.fillText("🤍", cx, cy);
+      hCtx.restore();
+      // 仙女静止
+      document.getElementById('fairyL').style.top = "0px";
+      document.getElementById('fairyR').style.top = "440px";
+    }, 55000);
+  </script>
+</body>
+</html>
